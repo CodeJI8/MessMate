@@ -22,6 +22,7 @@ import com.singleminds.messmate.ui.components.MessMateBackground
 import com.singleminds.messmate.ui.theme.HerbGreen
 import com.singleminds.messmate.ui.theme.MemberColors
 import com.singleminds.messmate.ui.theme.Saffron
+import java.util.Locale
 
 @Composable
 fun SettleScreen(
@@ -97,7 +98,7 @@ fun SettleScreen(
 
                                     // Amount Arrow
                                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        val amountStr = String.format("%.2f", transfer.amountMinor / 100.0)
+                                        val amountStr = String.format(Locale.getDefault(), "%.2f", transfer.amountMinor / 100.0)
                                         Text(
                                             text = "$currencySymbol$amountStr",
                                             style = MaterialTheme.typography.headlineMedium,
@@ -146,7 +147,7 @@ fun SettleScreen(
         val debtor = members.find { it.id == transfer.fromMemberId }
         val creditor = members.find { it.id == transfer.toMemberId }
 
-        var paymentAmountText by remember { mutableStateOf(transfer.amountMinor.toString()) }
+        var paymentAmountText by remember { mutableStateOf((transfer.amountMinor / 100.0).toString()) }
         var noteText by remember { mutableStateOf("") }
 
         AlertDialog(
@@ -161,8 +162,8 @@ fun SettleScreen(
                     Spacer(modifier = Modifier.height(12.dp))
                     OutlinedTextField(
                         value = paymentAmountText,
-                        onValueChange = { if (it.all { char -> char.isDigit() }) paymentAmountText = it },
-                        label = { Text("Amount (in cents e.g. 500 = $5.00)") },
+                        onValueChange = { paymentAmountText = it },
+                        label = { Text("Amount ($currencySymbol)") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
@@ -182,7 +183,8 @@ fun SettleScreen(
             confirmButton = {
                 Button(
                     onClick = {
-                        val amount = paymentAmountText.toLongOrNull() ?: 0L
+                        val amountMajor = paymentAmountText.toDoubleOrNull() ?: 0.0
+                        val amount = (amountMajor * 100).toLong()
                         if (amount > 0L) {
                             onRecordPayment(transfer.fromMemberId, transfer.toMemberId, amount, noteText)
                             activeSettlement = null

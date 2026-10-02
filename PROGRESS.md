@@ -8,8 +8,8 @@
   - `FloatingPillDock.kt`: Floating bottom navigation bar with raised center '+' action button.
   - `Layouts.kt`: Custom `MessMateBackground` and `LedgerCard` surface containers.
 - Shell UI:
-  - `HomeScreen.kt`: Static/dummy preview of "The Table" hero screen.
-  - `MainActivity.kt`: Edge-to-edge Scaffold wiring `HomeScreen` and `FloatingPillDock`.
+  - `HomeScreen.kt`: Hero screen layout with real data from `MainUiState`.
+  - `MainActivity.kt`: Edge-to-edge Scaffold wiring `HomeScreen`, `MealsScreen`, `LedgerScreen`, `MembersScreen`, `SettleScreen`, `MonthCloseScreen`, `SettingsScreen`, and `AddExpenseSheet`.
 - Data Layer (Room Database & Entities):
   - Entities: `Flat`, `Member`, `MealEntry`, `Expense`, `ExpenseShare`, `Payment`, `Month`, `AuditLog`, `RecurringBill`, `Enums`.
   - DAOs: `FlatDao`, `MemberDao`, `MealDao`, `ExpenseDao`, `PaymentDao`, `MonthDao`, `AuditDao`, `RecurringBillDao`.
@@ -23,28 +23,19 @@
     - Net balance formula (`paidOut + paymentsMade - (mealCost + billShares + paymentsReceived)`).
     - Minimum transfer settlement greedy algorithm (debtors -> creditors matching).
     - Tests for 2, 3, and 6 member scenarios and zero-meal guard.
+- Screens & Features:
+  - Onboarding Screen (Flat name, currency symbol selector, member addition, "Load sample flat").
+  - Home Screen ("The Table", Plate donut, month selector, total spent, tug-bar balances).
+  - Add Expense Bottom Sheet (direct major unit currency input converted to minor units, payer chips, Meal Pool / Bill switch, category chips).
+  - Meals Screen (day strip calendar, B/L/D pill chips with long-press guest counter, "Everyone ate" batch button).
+  - Ledger Screen (day-grouped feed with swipe/click delete & audit logging).
+  - Members Screen (active/inactive members, add member, personal statement breakdown).
+  - Settle Screen (animated flow cards: debtor -> amount -> creditor with "Mark as paid" partial/full payment generation).
+  - Month Close Screen (review, freeze month, carry forward toggle, month history, reopen month).
+  - Settings Screen (currency selector, theme mode switcher, recurring bills, JSON SAF export, summary image sharing).
 
 ## PARTIAL/BROKEN
-- None. Project compiles cleanly and passes all unit tests (`8 passed, 0 failed`).
+- None. Project compiles cleanly, builds debug APK successfully, and passes all unit tests (`8 passed, 0 failed`).
 
 ## TODO
-- [ ] ViewModels & Architecture:
-  - `MessMateApplication.kt`: Manual DI container providing `MessMateRepository` and `MessMateDatabase`.
-  - ViewModels for Onboarding, Home, Add Expense, Meals, Ledger, Members, Settle, Month Close, Settings.
-- [ ] Screens:
-  - Onboarding Screen (Flat setup, currency symbol, add members, "Load sample flat").
-  - Home Screen ("The Table", real-time Plate donut, month selector, total spent, tug-bar balances).
-  - Add Expense Bottom Sheet (keypad first, payer chips, Meal Pool / Bill toggle, category chips, split selector).
-  - Meals Screen (day strip calendar, B/L/D pill chips with long-press guest counter, "Everyone ate" batch button).
-  - Ledger Screen (day-grouped transaction feed, swipe to edit/delete with audit logging).
-  - Members Screen (add/edit members, mid-month leave date, personal statement view).
-  - Settle Screen (animated flow cards: debtor -> amount -> creditor with "Mark as paid" partial/full payment generation).
-  - Month Close Screen (review, freeze month, carry forward balances, month history, explicit reopen).
-  - Settings Screen (currency, theme toggle, default "assume everyone eats" preference).
-- [ ] Extras & Features:
-  - Month Summary Image / PDF generation & Android FileProvider sharing.
-  - SAF Backup/Restore (single JSON file with schema version & validation).
-  - Recurring bill templates & one-tap due confirm card.
-  - Receipt photo picking (PickVisualMedia) and app-private storage copy.
-  - Audit Log / Expense edit history timeline.
-  - UI polish: empty state canvas illustrations, haptics, TalkBack content descriptions, adaptive + monochrome launcher icons, release readiness (R8 rules verified, 0 permissions manifest).
+- [ ] Final release verification (AAB build steps).

@@ -21,6 +21,7 @@ import com.singleminds.messmate.data.local.entity.Member
 import com.singleminds.messmate.data.local.entity.SplitRule
 import com.singleminds.messmate.ui.theme.MemberColors
 import com.singleminds.messmate.ui.theme.Saffron
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,7 +49,8 @@ fun AddExpenseSheet(
 
     val categories = listOf("Grocery", "Utilities", "Gas", "Rent", "Snacks", "Other")
 
-    val amountMinor = (amountText.toLongOrNull() ?: 0L)
+    val amountMajor = amountText.toDoubleOrNull() ?: 0.0
+    val amountMinor = (amountMajor * 100).toLong()
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -69,7 +71,7 @@ fun AddExpenseSheet(
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Large Display Amount Keypad view
+            // Large Display Amount view
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -78,7 +80,7 @@ fun AddExpenseSheet(
                     .padding(16.dp),
                 contentAlignment = Alignment.Center
             ) {
-                val formattedAmount = String.format("%.2f", amountMinor / 100.0)
+                val formattedAmount = String.format(Locale.getDefault(), "%.2f", amountMajor)
                 Text(
                     text = "$currencySymbol$formattedAmount",
                     style = MaterialTheme.typography.displayMedium,
@@ -90,8 +92,9 @@ fun AddExpenseSheet(
             Spacer(modifier = Modifier.height(12.dp))
             OutlinedTextField(
                 value = amountText,
-                onValueChange = { if (it.all { char -> char.isDigit() }) amountText = it },
-                label = { Text("Amount (in minor units / cents e.g. 1200 = $12.00)") },
+                onValueChange = { amountText = it },
+                label = { Text("Amount ($currencySymbol)") },
+                placeholder = { Text("e.g. 1200") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
