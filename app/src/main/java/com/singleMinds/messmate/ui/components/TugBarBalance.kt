@@ -17,6 +17,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.singleminds.messmate.ui.theme.ChiliCoral
 import com.singleminds.messmate.ui.theme.HerbGreen
+import java.util.Locale
+import kotlin.math.abs
 
 @Composable
 fun TugBarBalance(
@@ -28,7 +30,8 @@ fun TugBarBalance(
     modifier: Modifier = Modifier
 ) {
     val maxBound = maxOf(maxAbsBalanceMinor, 1L).toFloat()
-    val normalizedBalance = (balanceMinor.toFloat() / maxBound).coerceIn(-1f, 1f)
+    // Coerce normalized balance slightly inside (-1f, 1f) so weights are never zero
+    val normalizedBalance = (balanceMinor.toFloat() / maxBound).coerceIn(-0.999f, 0.999f)
     
     val animatedBalance by animateFloatAsState(
         targetValue = normalizedBalance,
@@ -44,23 +47,26 @@ fun TugBarBalance(
         Spacer(modifier = Modifier.width(8.dp))
         Box(modifier = Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
             Box(modifier = Modifier.width(1.dp).fillMaxHeight().background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)))
+            
+            val absBal = abs(animatedBalance).coerceIn(0.001f, 0.999f)
+            
             if (animatedBalance < 0f) {
                 Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
-                    Spacer(modifier = Modifier.weight(1f + animatedBalance))
-                    Box(modifier = Modifier.weight(-animatedBalance).height(12.dp).clip(RoundedCornerShape(topStart = 6.dp, bottomStart = 6.dp)).background(ChiliCoral))
+                    Spacer(modifier = Modifier.weight((1f - absBal).coerceAtLeast(0.001f)))
+                    Box(modifier = Modifier.weight(absBal).height(12.dp).clip(RoundedCornerShape(topStart = 6.dp, bottomStart = 6.dp)).background(ChiliCoral))
                     Spacer(modifier = Modifier.weight(1f))
                 }
             }
             if (animatedBalance > 0f) {
                 Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
                     Spacer(modifier = Modifier.weight(1f))
-                    Box(modifier = Modifier.weight(animatedBalance).height(12.dp).clip(RoundedCornerShape(topEnd = 6.dp, bottomEnd = 6.dp)).background(HerbGreen))
-                    Spacer(modifier = Modifier.weight(1f - animatedBalance))
+                    Box(modifier = Modifier.weight(absBal).height(12.dp).clip(RoundedCornerShape(topEnd = 6.dp, bottomEnd = 6.dp)).background(HerbGreen))
+                    Spacer(modifier = Modifier.weight((1f - absBal).coerceAtLeast(0.001f)))
                 }
             }
         }
         Spacer(modifier = Modifier.width(8.dp))
-        val balanceStr = String.format("%.2f", kotlin.math.abs(balanceMinor / 100.0))
+        val balanceStr = String.format(Locale.getDefault(), "%.2f", abs(balanceMinor / 100.0))
         Text(text = "$currencySymbol$balanceStr", style = MaterialTheme.typography.titleMedium, color = if (balanceMinor >= 0) HerbGreen else ChiliCoral, modifier = Modifier.width(72.dp), textAlign = TextAlign.End, maxLines = 1)
     }
 }
