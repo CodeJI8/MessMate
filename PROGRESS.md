@@ -4,7 +4,7 @@
 - Theme setup (`Color.kt`, `Type.kt`, `Theme.kt`) with Warm Kitchen Ledger design system (CharcoalBase, WarmCream, WarmPaper, Saffron, ChiliCoral, HerbGreen, Fraunces font, Manrope font).
 - Core UI components:
   - `PlateVisual.kt`: Custom Canvas donut plate visualization with spring animation and slice tap handling.
-  - `TugBarBalance.kt`: Custom tug-bar balance component with spring animation.
+  - `TugBarBalance.kt`: Custom tug-bar balance component with spring animation and safe weight coercion.
   - `FloatingPillDock.kt`: Floating bottom navigation bar with raised center '+' action button.
   - `Layouts.kt`: Custom `MessMateBackground` and `LedgerCard` surface containers.
 - Shell UI:
@@ -13,7 +13,7 @@
 - Data Layer (Room Database & Entities):
   - Entities: `Flat`, `Member`, `MealEntry`, `Expense`, `ExpenseShare`, `Payment`, `Month`, `AuditLog`, `RecurringBill`, `Enums`.
   - DAOs: `FlatDao`, `MemberDao`, `MealDao`, `ExpenseDao`, `PaymentDao`, `MonthDao`, `AuditDao`, `RecurringBillDao`.
-  - `MessMateDatabase`: Room database configuration.
+  - `MessMateDatabase`: Room database configuration with R8 keep rules (`MessMateDatabase_Impl`).
   - `MessMateRepository`: Central repository managing Room flows, IO threading, and sample flat generation.
 - Pure Kotlin Business Logic & Engines (100% unit tested, 8 passing tests):
   - `SplitLogic.kt`: Largest-remainder rounding algorithm (`splitWeighted`).
@@ -35,7 +35,4 @@
   - Settings Screen (currency selector, theme mode switcher, recurring bills, JSON SAF export, summary image sharing).
 
 ## PARTIAL/BROKEN
-- None. Project compiles cleanly, builds debug APK successfully, and passes all unit tests (`8 passed, 0 failed`).
-
-## TODO
-- [ ] Final release verification (AAB build steps).
+- None. Project compiles cleanly, builds successfully, and passes all unit tests (`8 passed, 0 failed`).
